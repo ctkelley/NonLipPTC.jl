@@ -12,10 +12,14 @@ function alg0(u0, fobj, fgrad, proj, pdata, R, tau, maxit)
     RX=copy(R)
     u = copy(u0)
     ux=copy(u)
+    dv=copy(u)
     fc = fobj(u, pdata)
     NC = N0
+    Erest=1.0
     for ix = 1:maxit
+        dv .= u
         v .= proj(v - tau * R)
+        dv .-= v
         R .= fgrad(v, pdata)
         NT = norm(R)
         ft = fobj(v, pdata)
@@ -23,16 +27,18 @@ function alg0(u0, fobj, fgrad, proj, pdata, R, tau, maxit)
         if (NT > NC)
             u .= ux
         else
+#            println(norm(v))
             fc = ft
             NC = NT
             u .= v
             ux .= u
+            Erest=norm(dv,Inf)
         end
         rrnrm= NC / N0
 #        rrnrm=norm(R) / N0
         push!(reshist, rrnrm)
+        push!(errhist, Erest)
         E=norm(u - uex)
-        push!(errhist, E/E0)
     end
     return (sol = u, reshist = reshist, errhist = errhist)
 end
