@@ -19,7 +19,7 @@ include("Algorithms/alg0.jl")
 include("Algorithms/alg1.jl")
 include("Algorithms/alg3.jl")
 
-export OneD, setdata, proj, fobj1D
+export OneD, POneD, setdata, proj, fobj1D
 export alg1_test, alg3_test, alg0_test, alg0
 
 end

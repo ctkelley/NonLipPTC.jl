@@ -9,6 +9,19 @@ resid=nlt+lt-bvec
 return resid
 end
 
+function POneD(u,pdata)
+bvec=pdata.bvec
+L=pdata.L
+p=pdata.p
+lambda=pdata.lambda
+nlt=lambda*(proj.(u).^p)-bvec
+nltr=L\nlt
+lt= u
+resid=nltr+lt
+return resid
+end
+
+
 function fobj1D(u, pdata)
 L=pdata.L
 p=pdata.p
@@ -24,7 +37,6 @@ fnl=sum(fnlv)
 fobj=fl-fcons + fnl
 return fobj
 end
-
 
 function proj(u)
 proj=max.(u,0.0)
