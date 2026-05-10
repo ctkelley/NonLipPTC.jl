@@ -1,6 +1,5 @@
-function alg1(u0, fobj, fgrad, proj, pdata, R, tau, maxit)
+function alg1(u0, fobj, fgrad, proj, pdata, R, tau, maxit; epsilon = 0.001)
     uex = pdata.uex1d
-    precond = pdata.precond
     E0 = norm(u0 - uex)
     E = E0
     reshist = Float64[]
@@ -14,39 +13,38 @@ function alg1(u0, fobj, fgrad, proj, pdata, R, tau, maxit)
     u = copy(u0)
     ux = copy(u)
     fc = fobj(u, pdata)
+    ix = 1
     rrnrm = 1.0
-    grat = 1.0
-#    for ix in 1:maxit
-    ix=1
-#    while (ix <= maxit) && (grat < 2.0)
-    while (ix <= maxit) 
-        ix +=1
+    while ((ix <= maxit) && (rrnrm > epsilon))
+        #    for ix = 1:maxit
         v .= proj(v - tau * R)
         R .= fgrad(v, pdata)
         ft = fobj(v, pdata)
-        if (ft > fc)
+        #        if (ft > fc)
+        if (norm(R) > norm(RX))
             u .= ux
+            R .= RX
         else
+            RX .= R
             fc = ft
             u .= v
             ux .= u
         end
-        rrnrmx = rrnrm
         rrnrm = norm(R) / N0
-        grat=rrnrm/rrnrmx
         push!(reshist, rrnrm)
         E = norm(u - uex)
         push!(errhist, E / E0)
+        ix += 1
     end
     return (sol = u, reshist = reshist, errhist = errhist)
 end
 
-function alg1(GP::GD_Prob, R, tau, maxit)
+function alg1(GP::GD_Prob, R, tau, maxit; epsilon = 0.001)
     u0 = GP.u0
     fobj = GP.fobj
     fgrad = GP.fgrad
     pdata = GP.pdata
     proj = GP.projb
-    aout = alg1(u0, fobj, fgrad, proj, pdata, R, tau, maxit)
+    aout = alg1(u0, fobj, fgrad, proj, pdata, R, tau, maxit; epsilon = epsilon)
     return aout
 end

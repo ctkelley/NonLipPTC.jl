@@ -13,11 +13,11 @@ formats: c-style formatting for the columns.
 function fprintTeX(headers, formats, data)
     (mr, mc) = size(data)
     @printf("\\begin{tabular}{")
-    for i = 1:mc
+    for i in 1:mc
         @printf("l")
     end
     @printf("} \n")
-    for i = 1:(mc-1)
+    for i in 1:(mc - 1)
         @printf("%9s &", headers[i])
     end
     @printf("%9s \\\\ \n", headers[mc])
@@ -29,11 +29,11 @@ function fprintTeX(headers, formats, data)
     printf(fmt::String, args...) = @eval @printf($fmt, $(args...))
     #
     bigform = string(formats, "   \\\\ \n")
-    for i = 1:mr
+    for i in 1:mr
         printf(bigform, data[i, :]...)
     end
     @printf("\\hline \n")
-    @printf("\\end{tabular} \n")
+    return @printf("\\end{tabular} \n")
 end
 
 """
@@ -55,14 +55,14 @@ function fprintTeX(rowlabels, headers, formats, data)
     (cr == mr) || error("label size error")
     @printf("\\begin{tabular}{")
     @printf("l|")
-    for i = 1:mc
+    for i in 1:mc
         @printf("l")
     end
     @printf("} \n")
-    for i = 1:mc
+    for i in 1:mc
         @printf("%9s &", headers[i])
     end
-    @printf("%9s \\\\ \n", headers[mc+1])
+    @printf("%9s \\\\ \n", headers[mc + 1])
     @printf("\\hline \n")
     #
     # I am not sure why @printf needs this, but it does.
@@ -71,10 +71,10 @@ function fprintTeX(rowlabels, headers, formats, data)
     printf(fmt::String, args...) = @eval @printf($fmt, $(args...))
     #
     bigform = string(formats, "   \\\\ \n")
-    for i = 1:mr
+    for i in 1:mr
         @printf("%9s &", rowlabels[i])
         printf(bigform, data[i, :]...)
     end
     @printf("\\hline \n")
-    @printf("\\end{tabular} \n")
+    return @printf("\\end{tabular} \n")
 end
