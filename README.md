@@ -1,1 +1,1 @@
-Files for results of my Copper 2026 talk/paper
+Files for results latest version of Gradient Projection paper
