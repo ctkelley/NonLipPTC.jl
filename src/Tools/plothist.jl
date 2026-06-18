@@ -12,6 +12,7 @@ function plothist(avals, labelarray, vax = "residual"; semilogflag = true, ptitl
     end
     figure(1)
     for ip in 1:nplot
+        avals[ip] ./= avals[ip][1]
         itmax = length(avals[ip])
         itc = 0:(itmax - 1)
         if semilogflag

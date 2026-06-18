@@ -1,4 +1,5 @@
-function build_problem(n, uex; alpha = 0.5, nu = 0.5, precond = false)
+function build_problem(n, uex; alpha = 0.5, nu = 0.5, precond = false, 
+     tau0=.5)
     #
     # build rhs and boundary conditions
     #
@@ -45,5 +46,6 @@ function build_problem(n, uex; alpha = 0.5, nu = 0.5, precond = false)
         mu = mu,
         fdata = fdata,
         precond = precond,
+        tau0 = tau0
     )
 end

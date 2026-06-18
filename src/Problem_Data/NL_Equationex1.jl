@@ -15,15 +15,44 @@ function FEX1(u, pdata)
 end
 
 #
-# Fixed point equation
+# Easy to understand Fixed point map
 #
-function GF!(G,u,pdata)
+function GF1!(G, u, pdata)
+    N = length(u); n = Int(sqrt(N)); 
+    h=1.0/(n+1); h2=h*h
+    tau0 = pdata.tau0
+    precond=pdata.precond
+    precond ? (tau = tau0) : (tau = tau0*h2)
+#    G .= -tau*FEX1(u, pdata)
+#    G .+= u
+    G .= proj0(u - tau*FEX1(u,pdata))
+    return G
+end
+
+#
+# Fixed point map for two stage method
+#
+function GF2!(G,u,pdata)
+    N = length(u); n = Int(sqrt(N)); 
+    h=1.0/(n+1); h2=h*h
+    tau0 = pdata.tau0
+    precond=pdata.precond
+    precond ? (tau = tau0) : (tau = tau0*h2)
+#    FC1 = FEX1(u, pdata)
+    y = proj0(u - tau*FEX1(u,pdata))
+    G .= proj0(u - tau*FEX1(y,pdata))
+end
+#
+# Old fixed point map 
+#
+ function GFx!(G,u,pdata)
+    precond = pdata.precond
     N = length(u); n = Int(sqrt(N)); 
     FC1 = FGen(u, pdata) - pdata.rhs_eg1
     v1 = reshape(FC1, (n, n))
     fc21 = fish2d(v1, pdata.fdata)
     FC2 = reshape(fc21, (n * n, 1))
-    G .= u - FC2
+    precond ? (G .= u - FC2) : (G .= u - FC1)
     return G
 end
     
